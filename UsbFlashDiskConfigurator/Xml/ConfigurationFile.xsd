@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ConfigurationFile"
+    targetNamespace="http://tempuri.org/ConfigurationFile.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://tempuri.org/ConfigurationFile.xsd"
+    xmlns:mstns="http://tempuri.org/ConfigurationFile.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="AppConfiguration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Title" type="xs:string" />
+        <xs:element name="Information" type="xs:string" />
+        <xs:element name="CompanyLogoPath" type="xs:string" />
+        <xs:element name="Configurations">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Configuration" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Steps" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute type="xs:string" name="Type" use="required" />
+                        <xs:attribute type="xs:string" name="Parameters" />
+                        <xs:attribute type="xs:string" name="Description" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="Name" use="required" />
+                  <xs:attribute type="xs:string" name="Description" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

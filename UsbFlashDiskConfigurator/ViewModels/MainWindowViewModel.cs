@@ -154,6 +154,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
             ConfigurationSteps.Add(new ConfigurationStep(2, "asd", "gdfg"));
             ConfigurationSteps.Add(new ConfigurationStep(3, "fg", "dasdadfgdfgdfgdfgsdasd"));
             ConfigurationSteps.Add(new ConfigurationStep(4, "fdfsd", "ftr"));
+            ConfigurationSteps.Add(new ConfigurationStep(5, "ferter", "wert"));
+            ConfigurationSteps.Add(new ConfigurationStep(6, "jhm", "fdfdfgtr"));
 
             RefreshDiskDrives(null);
 

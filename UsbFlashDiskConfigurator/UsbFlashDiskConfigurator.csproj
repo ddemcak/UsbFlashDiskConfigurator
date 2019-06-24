@@ -73,7 +73,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\PathToImageConverter.cs" />
     <Compile Include="Models\ConfigurationModel.cs" />
-    <Compile Include="Models\ConfigurationStep.cs" />
+    <Compile Include="Models\ConfigurationStepModel.cs" />
     <Compile Include="Services\DriveManager.cs" />
     <Compile Include="Services\FileDownloader.cs">
       <SubType>Component</SubType>
@@ -84,7 +84,7 @@
     <Compile Include="Services\FileUnzipper.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Services\TextReplacer.cs">
+    <Compile Include="Services\TextEditor.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Services\UsbDriveConfigurator.cs">

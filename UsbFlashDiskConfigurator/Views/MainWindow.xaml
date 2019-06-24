@@ -23,7 +23,7 @@
         <Image HorizontalAlignment="Right" Height="55" Margin="0,10,10,0" VerticalAlignment="Top" Width="220" Source="{Binding ImageMainWindow, Converter={StaticResource PathToImageConverter}}" RenderOptions.BitmapScalingMode="HighQuality"/>
         <Rectangle Fill="#6641B1E1" HorizontalAlignment="Stretch" Height="75" VerticalAlignment="Top" Margin="0,75,0,0" />
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Choose disk:" VerticalAlignment="Top" TextAlignment="Left" Width="115" FontSize="16" Margin="25,101,0,0" Height="26"/>
-        <ComboBox x:Name="cmbDiskDrives" HorizontalAlignment="Stretch" Margin="145,167,25,0" VerticalAlignment="Top" Height="32" IsReadOnly="True" BorderThickness="0" ItemsSource="{Binding Configurations}" SelectedItem="{Binding SelectedConfiguration}" IsSynchronizedWithCurrentItem="True" FontSize="14" Background="#FFECF5F9"/>
+        <ComboBox x:Name="cmbDiskDrives" HorizontalAlignment="Stretch" Margin="145,167,25,0" VerticalAlignment="Top" Height="32" IsReadOnly="True" BorderThickness="0" ItemsSource="{Binding Configurations, Mode=OneWay}" SelectedItem="{Binding SelectedConfiguration}" IsSynchronizedWithCurrentItem="True" FontSize="14" Background="#FFECF5F9"/>
         <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Configuration:" VerticalAlignment="Top" TextAlignment="Left" Width="115" FontSize="16" Margin="25,170,0,0" Height="26"/>
         <ComboBox x:Name="cmbConfigurations" HorizontalAlignment="Left" Margin="145,97,0,0" VerticalAlignment="Top" Width="251" Height="32" IsReadOnly="True" BorderThickness="0" ItemsSource="{Binding DiskDrives}" SelectedItem="{Binding SelectedDiskDrive}" IsSynchronizedWithCurrentItem="True" FontSize="14"/>
         <Button x:Name="btnRefresh" Content="Refresh" Command="{Binding RefreshDisksCommand}" HorizontalAlignment="Left" Margin="401,97,0,0" VerticalAlignment="Top" Width="96" Height="32" FontSize="14" Controls:ControlsHelper.ContentCharacterCasing="Normal" Controls:ButtonHelper.PreserveTextCase="True" FontWeight="Bold" Controls:ButtonHelper.CornerRadius="0" BorderThickness="0"/>
@@ -41,8 +41,9 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Id" Binding = "{Binding Id}" />
-                <DataGridTextColumn Header = "Name" Binding = "{Binding Name}" Width="150" />
+                <DataGridTextColumn Header = "Type" Binding = "{Binding Type}" Width="150" />
                 <DataGridTextColumn Header = "Description" Binding = "{Binding Description}" Width="350"/>
+                <DataGridTextColumn Header = "Parameters" Binding = "{Binding Parameters}" Width="350"/>
             </DataGrid.Columns>
 
         </DataGrid>

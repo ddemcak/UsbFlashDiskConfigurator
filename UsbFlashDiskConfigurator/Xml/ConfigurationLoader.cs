@@ -31,6 +31,11 @@ namespace UsbFlashDiskConfigurator.Xml
             get { return config.Title; }
         }
 
+        public string Information
+        {
+            get { return config.Information; }
+        }
+
         public string ImagePath
         {
             get { return config.CompanyLogoPath; }

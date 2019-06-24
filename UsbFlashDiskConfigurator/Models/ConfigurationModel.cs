@@ -9,29 +9,58 @@ namespace UsbFlashDiskConfigurator.Models
 {
     public class ConfigurationModel
     {
+
+        #region MEMBERS
+
+        private AppConfigurationConfiguration configuration;
+                
         
-        #region PROPERTIES
+        private List<ConfigurationStepModel> steps = new List<ConfigurationStepModel>();
 
-        private AppConfiguration appconfig;
 
-        private List<BackgroundWorker> workers = new List<BackgroundWorker>();
+        public string Name
+        {
+            get { return configuration.Name; }
+        }
+
+        public string Description
+        {
+            get { return configuration.Description; }
+        }
+
+        public List<ConfigurationStepModel> Steps
+        {
+            get { return steps; }
+        }
+
 
         #endregion
 
         #region CONSTRUCTOR
-        public ConfigurationModel(AppConfiguration cfg)
+        public ConfigurationModel(AppConfigurationConfiguration conf)
         {
-            appconfig = cfg;
-            
+            configuration = conf;
+
+            foreach (AppConfigurationConfigurationSteps st in configuration.Steps)
+            {
+                steps.Add(new ConfigurationStepModel(st));
+            }
         }
+
+        
 
         #endregion
 
         #region METHODS
         private void ProcessConfiguration()
         {
+            
 
+        }
 
+        public override string ToString()
+        {
+            return string.Format("{0} ({1})", Name, Description);
         }
 
         #endregion

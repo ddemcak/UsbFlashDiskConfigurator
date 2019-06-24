@@ -29,9 +29,15 @@ namespace UsbFlashDiskConfigurator.ViewModels
         private FileDownloader fd;
         private FileUnzipper fu;
         private FileExecuter fe;
-        private TextReplacer tr;
+        private TextEditor tr;
 
 
+
+        #endregion
+
+        #region PROPERTIES
+
+        private ConfigurationModel cm;
 
         #endregion
 
@@ -68,7 +74,9 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
 
         public ObservableCollection<DriveInfoCustom> DiskDrives { get; private set; }
-        public ObservableCollection<ConfigurationStep> ConfigurationSteps { get; private set; }
+
+        public ObservableCollection<ConfigurationModel> Configurations { get; private set; }
+        public ObservableCollection<ConfigurationStepModel> ConfigurationSteps { get; private set; }
 
         private DriveInfoCustom selectedDiskDrive;
         public DriveInfoCustom SelectedDiskDrive
@@ -101,10 +109,10 @@ namespace UsbFlashDiskConfigurator.ViewModels
             }
         }
 
-        public ObservableCollection<ConfigurationModel> Configurations { get; private set; }
+        
 
-        private DriveInfoCustom selectedConfiguration;
-        public DriveInfoCustom SelectedConfiguration
+        private ConfigurationModel selectedConfiguration;
+        public ConfigurationModel SelectedConfiguration
         {
             get { return selectedConfiguration; }
 
@@ -114,6 +122,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 {
                     selectedConfiguration = value;
                     RaisePropertyChanged("SelectedConfiguration");
+                    RefreshSteps();
                 }
             }
         }
@@ -148,14 +157,15 @@ namespace UsbFlashDiskConfigurator.ViewModels
             CancelCommand = new RelayCommand<Window>(CancelApplication);
 
             DiskDrives = new ObservableCollection<DriveInfoCustom>();
-            ConfigurationSteps = new ObservableCollection<ConfigurationStep>();
+            Configurations = new ObservableCollection<ConfigurationModel>();
+            ConfigurationSteps = new ObservableCollection<ConfigurationStepModel>();
 
-            ConfigurationSteps.Add(new ConfigurationStep(1, "abc", "dasdasdasd"));
-            ConfigurationSteps.Add(new ConfigurationStep(2, "asd", "gdfg"));
-            ConfigurationSteps.Add(new ConfigurationStep(3, "fg", "dasdadfgdfgdfgdfgsdasd"));
-            ConfigurationSteps.Add(new ConfigurationStep(4, "fdfsd", "ftr"));
-            ConfigurationSteps.Add(new ConfigurationStep(5, "ferter", "wert"));
-            ConfigurationSteps.Add(new ConfigurationStep(6, "jhm", "fdfdfgtr"));
+            //ConfigurationSteps.Add(new ConfigurationStepModel(1, "abc", "dasdasdasd"));
+            //ConfigurationSteps.Add(new ConfigurationStepModel(2, "asd", "gdfg"));
+            //ConfigurationSteps.Add(new ConfigurationStepModel(3, "fg", "dasdadfgdfgdfgdfgsdasd"));
+            //ConfigurationSteps.Add(new ConfigurationStepModel(4, "fdfsd", "ftr"));
+            //ConfigurationSteps.Add(new ConfigurationStepModel(5, "ferter", "wert"));
+            //ConfigurationSteps.Add(new ConfigurationStepModel(6, "jhm", "fdfdfgtr"));
 
             RefreshDiskDrives(null);
 
@@ -179,7 +189,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             //fe.RunWorkerAsync();
 
-            tr = new TextReplacer("E:\\slax\\boot\\syslinux.cfg", "TIMEOUT 0", "TIMEOUT 60");
+            tr = new TextEditor("E:\\slax\\boot\\syslinux.cfg", "TIMEOUT 0", "TIMEOUT 60");
             tr.RunWorkerCompleted += Tr_RunWorkerCompleted;
 
             //tr.RunWorkerAsync();
@@ -232,6 +242,26 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             TitleMainWindow = cl.Title;
             ImageMainWindow = cl.ImagePath;
+
+            foreach (AppConfigurationConfiguration cfg in cl.Config.Configurations)
+            {
+                Configurations.Add(new ConfigurationModel(cfg));
+            }
+            SelectedConfiguration = Configurations.First();
+
+
+            RefreshSteps();
+
+
+        }
+
+        private void RefreshSteps()
+        {
+            ConfigurationSteps.Clear();
+            foreach (ConfigurationStepModel cfgs in SelectedConfiguration.Steps)
+            {
+                ConfigurationSteps.Add(cfgs);
+            }
         }
 
 

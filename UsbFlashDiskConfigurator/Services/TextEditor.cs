@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace UsbFlashDiskConfigurator.Services
 {
-    public class TextReplacer : BackgroundWorker
+    public class TextEditor : BackgroundWorker
     {
         #region PROPERTIES
         private string fileToEdit;
@@ -35,7 +35,7 @@ namespace UsbFlashDiskConfigurator.Services
 
 
         #region CONSTRUCTOR
-        public TextReplacer(string file, string findPattern, string replacePattern)
+        public TextEditor(string file, string findPattern, string replacePattern)
         {
             WorkerSupportsCancellation = true;
 

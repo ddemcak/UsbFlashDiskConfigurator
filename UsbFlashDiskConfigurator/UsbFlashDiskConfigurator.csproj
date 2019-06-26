@@ -87,7 +87,7 @@
     <Compile Include="Services\TextEditor.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Services\UsbDriveConfigurator.cs">
+    <Compile Include="Services\DriveFormatter.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

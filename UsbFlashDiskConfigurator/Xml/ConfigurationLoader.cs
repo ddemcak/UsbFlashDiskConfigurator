@@ -42,8 +42,7 @@ namespace UsbFlashDiskConfigurator.Xml
         }
 
         #endregion
-
-
+        
         #region CONSTRUCTOR
         public ConfigurationLoader()
         {

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UsbFlashDiskConfigurator.Services;
 
 namespace UsbFlashDiskConfigurator.Models
 {
@@ -12,10 +14,13 @@ namespace UsbFlashDiskConfigurator.Models
 
         #region MEMBERS
 
+        private DriveInfo driveInfo;
         private AppConfigurationConfiguration configuration;
                 
         
         private List<ConfigurationStepModel> steps = new List<ConfigurationStepModel>();
+
+        private List<BackgroundWorker> workers = new List<BackgroundWorker>();
 
 
         public string Name
@@ -37,13 +42,16 @@ namespace UsbFlashDiskConfigurator.Models
         #endregion
 
         #region CONSTRUCTOR
-        public ConfigurationModel(AppConfigurationConfiguration conf)
+        public ConfigurationModel(DriveInfo di, AppConfigurationConfiguration conf)
         {
+            driveInfo = di;
             configuration = conf;
+
+            int i = 1;
 
             foreach (AppConfigurationConfigurationSteps st in configuration.Steps)
             {
-                steps.Add(new ConfigurationStepModel(st));
+                steps.Add(new ConfigurationStepModel(i++, st));
             }
         }
 
@@ -54,8 +62,30 @@ namespace UsbFlashDiskConfigurator.Models
         #region METHODS
         private void ProcessConfiguration()
         {
-            
+            foreach (ConfigurationStepModel csm in steps)
+            {
+                switch (csm.Type)
+                {
+                    case "format":
+                        
 
+                        break;
+                    default:
+                        break;
+                        
+                            
+                    
+
+                }
+            }
+
+        }
+
+        private void ProcessDriveFormatter(ConfigurationStepModel csm)
+        {
+            string fs = csm.ParametersArray[0];
+
+            DriveFormatter df = new DriveFormatter(driveInfo, fs);
         }
 
         public override string ToString()

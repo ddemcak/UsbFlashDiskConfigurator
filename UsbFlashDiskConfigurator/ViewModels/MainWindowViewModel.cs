@@ -245,7 +245,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             foreach (AppConfigurationConfiguration cfg in cl.Config.Configurations)
             {
-                Configurations.Add(new ConfigurationModel(cfg));
+                Configurations.Add(new ConfigurationModel(selectedDiskDrive.DriveInfo, cfg));
             }
             SelectedConfiguration = Configurations.First();
 

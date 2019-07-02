@@ -37,6 +37,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Black-Drive-USB.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
@@ -79,6 +82,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Services\FileExecuter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Services\FileMover.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Services\FileUnzipper.cs">
@@ -142,6 +148,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Black-Drive-USB.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

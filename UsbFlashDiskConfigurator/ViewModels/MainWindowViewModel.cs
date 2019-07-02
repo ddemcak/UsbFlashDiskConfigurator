@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using UsbFlashDiskConfigurator.Helpers;
 using UsbFlashDiskConfigurator.Models;
 using UsbFlashDiskConfigurator.Services;
@@ -37,7 +39,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         #region PROPERTIES
 
-        private ConfigurationModel cm;
+        
 
         #endregion
 
@@ -144,6 +146,43 @@ namespace UsbFlashDiskConfigurator.ViewModels
             }
         }
 
+        //BackgroundWorker currentWorker;
+        int currentWorkerIdx = -1;
+
+        private double progressBarValue;
+        public double ProgressBarValue
+        {
+            get { return progressBarValue; }
+
+            set
+            {
+                if (progressBarValue != value)
+                {
+                    progressBarValue = value;
+                    RaisePropertyChanged("ProgressBarValue");
+                }
+            }
+        }
+
+        private bool progressBarIsInderetminate;
+        public bool ProgressBarIsInderetminate
+        {
+            get { return progressBarIsInderetminate; }
+
+            set
+            {
+                if (progressBarIsInderetminate != value)
+                {
+                    progressBarIsInderetminate = value;
+                    RaisePropertyChanged("ProgressBarIsInderetminate");
+                }
+            }
+        }
+
+        
+
+
+
 
         #region CONSTRUCTOR
         public MainWindowViewModel()
@@ -152,8 +191,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
             ImageMainWindow = "testIO.png";
 
 
-            RefreshDisksCommand = new RelayCommand(RefreshDiskDrives);
-            CreateDiskCommand = new RelayCommand(CreateDisk);
+            RefreshDisksCommand = new RelayCommand(RefreshDiskDrives, CanCreateDisk);
+            CreateDiskCommand = new RelayCommand(CreateDisk, CanCreateDisk);
             CancelCommand = new RelayCommand<Window>(CancelApplication);
 
             DiskDrives = new ObservableCollection<DriveInfoCustom>();
@@ -230,6 +269,40 @@ namespace UsbFlashDiskConfigurator.ViewModels
             StatusInformation = string.Format("{0} %", e.ProgressPercentage);
         }
 
+        private void Bw_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            //int idxWorker = SelectedConfiguration.Workers[currentWorkerIdx];
+
+            if (!(bool)e.Result)
+            {
+                if(currentWorkerIdx != -1) SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("ERROR");
+
+                //StatusInformation = string.Format("Current step has been cancelled.");
+            }
+            else
+            {
+                if (currentWorkerIdx != -1) SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("DONE");
+
+                //StatusInformation = string.Format("Current step has been sucessfully finished.");
+            }
+
+            CreateDisk(null);
+            
+        }
+
+        private void Bw_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            //int idxWorker = SelectedConfiguration.Workers.IndexOf(currentWorker);
+            if (currentWorkerIdx != -1)
+            {
+                if (SelectedConfiguration.Workers[currentWorkerIdx].WorkerReportsProgress) SelectedConfiguration.Steps[currentWorkerIdx].SetStatus(string.Format("{0}%", e.ProgressPercentage));
+                else SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("IN WORK");
+            }
+
+            //StatusInformation = string.Format("{0} %", e.ProgressPercentage);
+            ProgressBarValue = e.ProgressPercentage;
+        }
+
         #endregion
 
         #region METHODS
@@ -243,32 +316,93 @@ namespace UsbFlashDiskConfigurator.ViewModels
             TitleMainWindow = cl.Title;
             ImageMainWindow = cl.ImagePath;
 
+
+            Configurations.Clear();
             foreach (AppConfigurationConfiguration cfg in cl.Config.Configurations)
             {
-                Configurations.Add(new ConfigurationModel(selectedDiskDrive.DriveInfo, cfg));
+                if (selectedDiskDrive != null) Configurations.Add(new ConfigurationModel(selectedDiskDrive.DriveInfo, cfg));
             }
-            SelectedConfiguration = Configurations.First();
+            if (Configurations.Count != 0) SelectedConfiguration = Configurations.First();
 
 
             RefreshSteps();
+
+            //StatusInformation = "...";
 
 
         }
 
         private void RefreshSteps()
         {
-            ConfigurationSteps.Clear();
-            foreach (ConfigurationStepModel cfgs in SelectedConfiguration.Steps)
+            if (SelectedConfiguration != null)
             {
-                ConfigurationSteps.Add(cfgs);
+                ConfigurationSteps.Clear();
+                foreach (ConfigurationStepModel cfgs in SelectedConfiguration.Steps)
+                {
+                    ConfigurationSteps.Add(cfgs);
+                }
             }
         }
 
 
+
+        private bool CanCreateDisk(object obj)
+        {
+            if (currentWorkerIdx != -1 && SelectedConfiguration.Workers[currentWorkerIdx].IsBusy) return false;
+            else return true;
+        }
+
         public void CreateDisk(object obj)
         {
-            if (fd.IsBusy) fd.CancelAsync();
+            bool cnt = true;
+
+            StatusInformation = "Configuration of a USB key is in progress...";
+
+            if (currentWorkerIdx == -1)
+            {
+                SelectedConfiguration.ResetStepStatuses();
+                currentWorkerIdx = 0;
+
+                
+
+                //currentWorker = SelectedConfiguration.Workers[0];
+            }
+            else
+            {
+                //int nextWorker = SelectedConfiguration.Workers.IndexOf(currentWorker) + 1;
+                currentWorkerIdx++;
+                if (currentWorkerIdx >= SelectedConfiguration.Workers.Count) cnt = false;
+            }
+
+            if (cnt)
+            {
+                SelectedConfiguration.Workers[currentWorkerIdx].ProgressChanged += Bw_ProgressChanged;
+                SelectedConfiguration.Workers[currentWorkerIdx].RunWorkerCompleted += Bw_RunWorkerCompleted;
+
+                
+                SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("IN WORK");
+                //if (currentWorker.WorkerReportsProgress) ProgressBarIsInderetminate = false;
+                //else ProgressBarIsInderetminate = true;
+
+                SelectedConfiguration.Workers[currentWorkerIdx].RunWorkerAsync();
+            }
+            else
+            {
+                //SelectedConfiguration.Workers[currentWorkerIdx].ProgressChanged -= Bw_ProgressChanged;
+                //SelectedConfiguration.Workers[currentWorkerIdx].RunWorkerCompleted -= Bw_RunWorkerCompleted;
+
+                //ProgressBarIsInderetminate = false;
+                //ProgressBarValue = 100;
+
+                currentWorkerIdx = -1;
+
+                StatusInformation = "Configuration of a USB key has finished.";
+                CommandManager.InvalidateRequerySuggested();
+            }
+
         }
+
+        
 
         public void CancelApplication(Window window)
         {
@@ -294,8 +428,9 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 else SelectedDiskDrive = DiskDrives.First();
                 
             }
-            
+
             //UpdateSelectedDiskDriveInformation();
+            LoadConfiguration();
 
         }
 

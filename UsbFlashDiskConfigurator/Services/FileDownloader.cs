@@ -47,7 +47,7 @@ namespace UsbFlashDiskConfigurator.Services
 
             source = src;
             downloadLocation = location;
-            fileSize = CalculateFileSize(source.AbsoluteUri);
+            //fileSize = CalculateFileSize(source.AbsoluteUri);
 
             webClient = new WebClient();
             webClient.DownloadProgressChanged += webClient_DownloadProgressChanged;
@@ -67,8 +67,7 @@ namespace UsbFlashDiskConfigurator.Services
         protected override void OnDoWork(DoWorkEventArgs e)
         {
 
-
-            webClient.DownloadFileAsync(source, string.Format("{0}\\{1}", Directory.GetCurrentDirectory(), "apt-flash-loader-1.8.0.tar"));
+            webClient.DownloadFileAsync(source, string.Format("{0}\\{1}", Directory.GetCurrentDirectory(), source.Segments.Last()));
 
 
             while (webClient.IsBusy)

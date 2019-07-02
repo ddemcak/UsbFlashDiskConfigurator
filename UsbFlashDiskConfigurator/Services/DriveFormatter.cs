@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace UsbFlashDiskConfigurator.Services
@@ -23,7 +24,9 @@ namespace UsbFlashDiskConfigurator.Services
 
         public DriveFormatter(DriveInfo di, string fs)
         {
+            WorkerReportsProgress = false;
             driveInfo = di;
+            filesystem = fs;
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
@@ -41,13 +44,15 @@ namespace UsbFlashDiskConfigurator.Services
                 else
                 {
                     res = DriveManager.FormatDrive(letter, driveInfo.VolumeLabel, filesystem);
+
+                    Thread.Sleep(2000);
                 }
             }
             catch
             {
                 res = false;
             }
-            //Thread.Sleep(2000);
+            
 
             e.Result = res;
         }

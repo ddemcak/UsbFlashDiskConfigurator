@@ -35,8 +35,7 @@ namespace UsbFlashDiskConfigurator.Services
         public FileUnzipper(string src, string dest)
         {
             WorkerReportsProgress = true;
-            WorkerSupportsCancellation = true;
-
+            
             sourceFile = src;
             destinationPath = dest;
             

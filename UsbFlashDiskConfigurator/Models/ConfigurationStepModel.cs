@@ -4,20 +4,26 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UsbFlashDiskConfigurator.ViewModels;
 
 namespace UsbFlashDiskConfigurator.Models
 {
-    public class ConfigurationStepModel
+    public class ConfigurationStepModel : ViewModelBase
     {
-        private static int _ID = 1;
-
-
+        
 
         private int id;
 
         public int Id
         {
             get { return id; }
+        }
+
+        private string status;
+
+        public string Status
+        {
+            get { return status; }
         }
 
         private string type;
@@ -50,9 +56,16 @@ namespace UsbFlashDiskConfigurator.Models
         public ConfigurationStepModel(int idn, AppConfigurationConfigurationSteps step)
         {
             id = idn;
+            status = "";
             type = step.Type;
             description = step.Description;
             parameters = step.Parameters;
+        }
+
+        public void SetStatus(string sts)
+        {
+            status = sts;
+            RaisePropertyChanged("Status");
         }
 
         

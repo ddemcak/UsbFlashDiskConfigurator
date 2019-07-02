@@ -8,7 +8,7 @@
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Title="USB Flash Disk Configurator" Height="768" Width="1024"
+        Title="USB Flash Disk Configurator" Height="800" Width="1200"
                       
         BorderThickness="1"
         WindowStartupLocation="CenterScreen">
@@ -41,12 +41,14 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Id" Binding = "{Binding Id}" />
-                <DataGridTextColumn Header = "Type" Binding = "{Binding Type}" Width="150" />
-                <DataGridTextColumn Header = "Description" Binding = "{Binding Description}" Width="350"/>
-                <DataGridTextColumn Header = "Parameters" Binding = "{Binding Parameters}" Width="350"/>
+                <DataGridTextColumn Header = "Status" Binding = "{Binding Status}" Width="75" />
+                <!--<DataGridTextColumn Header = "Type" Binding = "{Binding Type}" Width="150" />-->
+                <DataGridTextColumn Header = "Description" Binding = "{Binding Description}" Width="300"/>
+                <DataGridTextColumn Header = "Parameters" Binding = "{Binding Parameters}" Width="*"/>
             </DataGrid.Columns>
 
         </DataGrid>
+        <TextBlock TextWrapping="Wrap" Text="{Binding StatusInformation}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="16" Margin="25,0,261,12" Height="26"/>
 
     </Grid>
 </Controls:MetroWindow>

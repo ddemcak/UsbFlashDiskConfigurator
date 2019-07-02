@@ -25,6 +25,8 @@ namespace UsbFlashDiskConfigurator.Services
         #region CONSTRUCTOR
         public FileExecuter(string exeFile)
         {
+            WorkerReportsProgress = false;
+
             fileToExecute = exeFile;
             
 

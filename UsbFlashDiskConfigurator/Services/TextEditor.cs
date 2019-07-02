@@ -37,7 +37,7 @@ namespace UsbFlashDiskConfigurator.Services
         #region CONSTRUCTOR
         public TextEditor(string file, string findPattern, string replacePattern)
         {
-            WorkerSupportsCancellation = true;
+            WorkerReportsProgress = false;
 
             fileToEdit = file;
             textToFind = findPattern;

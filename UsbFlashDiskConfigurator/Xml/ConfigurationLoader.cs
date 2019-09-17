@@ -51,13 +51,22 @@ namespace UsbFlashDiskConfigurator.Xml
         #endregion
 
         #region CONSTRUCTOR
-        public void LoadConfiguration()
+        public bool LoadConfiguration()
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(AppConfiguration));
+            try
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(AppConfiguration));
 
-            StreamReader reader = new StreamReader(_configFilePath);
-            config = (AppConfiguration)serializer.Deserialize(reader);
-            reader.Close();
+                StreamReader reader = new StreamReader(_configFilePath);
+                config = (AppConfiguration)serializer.Deserialize(reader);
+                reader.Close();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
         #endregion
     }

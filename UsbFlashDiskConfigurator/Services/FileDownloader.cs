@@ -64,22 +64,56 @@ namespace UsbFlashDiskConfigurator.Services
             return string.Format("{0} MB", Math.Round((double)resp.ContentLength / 1048576, 2));
         }
 
+        private bool CheckIfRemoteFileExists(string url)
+        {
+            using (var client = new WebClient())
+            {
+                try
+                {
+                    client.DownloadFile(url, String.Empty);
+                }
+                catch (WebException wex)
+                {
+                    if (((HttpWebResponse)wex.Response).StatusCode == HttpStatusCode.NotFound)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-
-            webClient.DownloadFileAsync(source, string.Format("{0}\\{1}", Directory.GetCurrentDirectory(), source.Segments.Last()));
-
-
-            while (webClient.IsBusy)
+            try
             {
-                if (CancellationPending)
+                /*
+                if (!CheckIfRemoteFileExists(source.AbsoluteUri))
                 {
-                    webClient.CancelAsync();
                     e.Result = false;
-                    break;
+                    return;
                 }
-                Thread.Sleep(100);
-                e.Result = true;
+                */
+                webClient.DownloadFileAsync(source, string.Format("{0}\\{1}", Directory.GetCurrentDirectory(), source.Segments.Last()));
+
+                while (webClient.IsBusy)
+                {
+                    if (CancellationPending)
+                    {
+                        webClient.CancelAsync();
+                        e.Result = false;
+                        break;
+                    }
+                    Thread.Sleep(100);
+                    e.Result = true;
+                }
+
+                //if (webClient.Headers.Get("Status") == HttpStatusCode.NotFound) e.Result = false;
+            }
+            catch
+            {
+                e.Result = false;
             }
         }
                 

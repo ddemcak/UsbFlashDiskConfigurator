@@ -47,35 +47,56 @@ namespace UsbFlashDiskConfigurator.Services
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-            using (Stream stream = File.OpenRead(sourceFile))
+            try
             {
-                reader = ReaderFactory.Open(stream);
-                
 
-                while (reader.MoveToNextEntry())
+                if (!File.Exists(sourceFile))
                 {
-                    
-                    if (!reader.Entry.IsDirectory)
-                    {
-                        //Console.WriteLine(reader.Entry.Key);
-                        reader.WriteEntryToDirectory(destinationPath,
-                            new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
-                    }
-                    else
-                    {
-                        Directory.CreateDirectory(string.Format("{0}\\{1}", destinationPath, reader.Entry.Key));
-                    }
-                    
-                    
-
-                    if (CancellationPending)
-                    {
-                        reader.Dispose();
-                        e.Result = false;
-                        break;
-                    }
-                    else e.Result = true;
+                    e.Result = false;
+                    return;
                 }
+
+                FileInfo fi = new FileInfo(sourceFile);
+                if (fi.Length == 0)
+                {
+                    e.Result = false;
+                    return;
+                }
+
+                using (Stream stream = File.OpenRead(sourceFile))
+                {
+                    reader = ReaderFactory.Open(stream);
+
+
+                    while (reader.MoveToNextEntry())
+                    {
+
+                        if (!reader.Entry.IsDirectory)
+                        {
+                            //Console.WriteLine(reader.Entry.Key);
+                            reader.WriteEntryToDirectory(destinationPath,
+                                new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
+                        }
+                        else
+                        {
+                            Directory.CreateDirectory(string.Format("{0}\\{1}", destinationPath, reader.Entry.Key));
+                        }
+
+
+
+                        if (CancellationPending)
+                        {
+                            reader.Dispose();
+                            e.Result = false;
+                            break;
+                        }
+                        else e.Result = true;
+                    }
+                }
+            }
+            catch
+            {
+                e.Result = false;
             }
         }
 

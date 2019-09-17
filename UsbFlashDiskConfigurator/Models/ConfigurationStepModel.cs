@@ -10,7 +10,9 @@ namespace UsbFlashDiskConfigurator.Models
 {
     public class ConfigurationStepModel : ViewModelBase
     {
-        
+
+        private string usbKeyLetter;
+
 
         private int id;
 
@@ -40,26 +42,40 @@ namespace UsbFlashDiskConfigurator.Models
             get { return description; }
         }
 
-        private string parameters;
-        public string Parameters
+        private string[] parameters;
+        
+        public string[] ParametersArray
         {
             get { return parameters; }
         }
 
-        public string[] ParametersArray
+        public string Parameters
         {
-            get { return parameters.Split(','); }
+            get
+            {
+                string prms = "";
+                foreach (string s in parameters) prms += s + " | ";
+
+                prms = prms.Substring(0, prms.Length - 3);
+                return prms;
+            }
         }
 
+        
 
 
-        public ConfigurationStepModel(int idn, AppConfigurationConfigurationSteps step)
+
+        public ConfigurationStepModel(int idn, AppConfigurationConfigurationStep step, string ukl)
         {
             id = idn;
             status = "";
             type = step.Type;
             description = step.Description;
-            parameters = step.Parameters;
+            parameters = step.Parameter;
+
+            usbKeyLetter = ukl;
+
+            for (int i = 0; i < parameters.Length; i++) parameters[i] = parameters[i].Replace("[USBKEY]\\", usbKeyLetter);
         }
 
         public void SetStatus(string sts)

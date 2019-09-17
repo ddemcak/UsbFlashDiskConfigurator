@@ -54,9 +54,9 @@ namespace UsbFlashDiskConfigurator.Models
 
             int i = 1;
 
-            foreach (AppConfigurationConfigurationSteps st in configuration.Steps)
+            foreach (AppConfigurationConfigurationStep st in configuration.Step)
             {
-                steps.Add(new ConfigurationStepModel(i++, st));
+                steps.Add(new ConfigurationStepModel(i++, st, driveInfo.Name));
             }
 
             ProcessConfiguration();
@@ -124,7 +124,7 @@ namespace UsbFlashDiskConfigurator.Models
         {
             if (csm.ParametersArray.Length == 3)
             {
-                string file = string.Format("{0}{1}", driveInfo.Name, csm.ParametersArray[0]);
+                string file = csm.ParametersArray[0];
                 string findText = csm.ParametersArray[1];
                 string replaceText = csm.ParametersArray[2];
 
@@ -152,7 +152,7 @@ namespace UsbFlashDiskConfigurator.Models
                 string localfile = csm.ParametersArray[0];
                 string driveSubDir = csm.ParametersArray[1];
 
-                FileUnzipper fu = new FileUnzipper(localfile, string.Format("{0}\\{1}", driveInfo.Name, driveSubDir));
+                FileUnzipper fu = new FileUnzipper(localfile, driveSubDir);
                 workers.Add(fu);
             }
         }
@@ -163,7 +163,7 @@ namespace UsbFlashDiskConfigurator.Models
             {
                 string localfile = csm.ParametersArray[0];
 
-                FileExecuter fe = new FileExecuter(string.Format("{0}\\{1}", driveInfo.Name, localfile));
+                FileExecuter fe = new FileExecuter(localfile);
                 workers.Add(fe);
             }
         }
@@ -175,7 +175,7 @@ namespace UsbFlashDiskConfigurator.Models
                 string fileFromMove = csm.ParametersArray[0];
                 string fileToMove = csm.ParametersArray[1];
 
-                FileMover fm = new FileMover(string.Format("{0}\\{1}", driveInfo.Name, fileFromMove), string.Format("{0}\\{1}", driveInfo.Name, fileToMove));
+                FileMover fm = new FileMover(fileFromMove, fileToMove);
                 workers.Add(fm);
             }
         }

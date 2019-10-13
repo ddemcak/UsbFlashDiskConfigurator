@@ -15,7 +15,7 @@ namespace UsbFlashDiskConfigurator.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string path = value as string;
-            if (path != null)
+            if (path != null && File.Exists(path))
             {
                 BitmapImage image = new BitmapImage();
                 using (FileStream stream = File.OpenRead(path))

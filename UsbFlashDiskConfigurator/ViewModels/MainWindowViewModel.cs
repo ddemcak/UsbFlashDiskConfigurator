@@ -28,15 +28,30 @@ namespace UsbFlashDiskConfigurator.ViewModels
         #endregion
 
         #region WORKERS
-        
+
         #endregion
 
         #region PROPERTIES
 
-        
+
 
         #endregion
 
+
+        private string titleBarMainWindow;
+        public string TitleBarMainWindow
+        {
+            get { return titleBarMainWindow; }
+
+            set
+            {
+                if (titleBarMainWindow != value)
+                {
+                    titleBarMainWindow = value;
+                    RaisePropertyChanged("TitleBarMainWindow");
+                }
+            }
+        }
 
         private string titleMainWindow;
         public string TitleMainWindow
@@ -201,6 +216,9 @@ namespace UsbFlashDiskConfigurator.ViewModels
             DiskDrives = new ObservableCollection<DriveInfoCustom>();
             Configurations = new ObservableCollection<ConfigurationModel>();
             ConfigurationSteps = new ObservableCollection<ConfigurationStepModel>();
+
+            Version ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            TitleBarMainWindow = string.Format("USB Flash Disk Configurator v{0}.{1}.{2}", ver.Major, ver.Minor, ver.Build);
 
             RefreshDiskDrives(null);
 

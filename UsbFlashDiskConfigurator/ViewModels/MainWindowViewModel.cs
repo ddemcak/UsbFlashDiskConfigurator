@@ -154,7 +154,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 }
             }
         }
-
+            
         //BackgroundWorker currentWorker;
         int currentWorkerIdx = -1;
 
@@ -202,14 +202,44 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 }
             }
         }
+
+        private bool chooseDiskEnable;
+        public bool ChooseDiskEnable
+        {
+            get { return chooseDiskEnable; }
+
+            set
+            {
+                if (chooseDiskEnable != value)
+                {
+                    chooseDiskEnable = value;
+                    RaisePropertyChanged("ChooseDiskEnable");
+                }
+            }
+        }
+
+        private bool selectConfigurationEnabled;
+        public bool SelectConfigurationEnabled
+        {
+            get { return selectConfigurationEnabled; }
+
+            set
+            {
+                if (selectConfigurationEnabled != value)
+                {
+                    selectConfigurationEnabled = value;
+                    RaisePropertyChanged("SelectConfigurationEnabled");
+                }
+            }
+        }
+
+
         
-
-
 
         #region CONSTRUCTOR
         public MainWindowViewModel()
         {
-            RefreshDisksCommand = new RelayCommand(RefreshDiskDrives, CanCreateDisk);
+            RefreshDisksCommand = new RelayCommand(RefreshDiskDrives, CanRefreshDiskDrives);
             CreateDiskCommand = new RelayCommand(CreateDisk, CanCreateDisk);
             CancelCommand = new RelayCommand<Window>(CancelApplication);
 
@@ -223,6 +253,9 @@ namespace UsbFlashDiskConfigurator.ViewModels
             RefreshDiskDrives(null);
 
             LoadConfiguration();
+
+            ChooseDiskEnable = true;
+            SelectConfigurationEnabled = true;
         }
 
         
@@ -291,7 +324,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         private bool CanCreateDisk(object obj)
         {
-            if (currentWorkerIdx != -1 && SelectedConfiguration.Workers[currentWorkerIdx].IsBusy) return false;
+            if (SelectedConfiguration == null || (currentWorkerIdx != -1 && SelectedConfiguration.Workers[currentWorkerIdx].IsBusy)) return false;
             else return true;
         }
 
@@ -300,6 +333,9 @@ namespace UsbFlashDiskConfigurator.ViewModels
             bool cnt = true;
 
             StatusInformation = "Configuration of a USB key is in progress...";
+
+            ChooseDiskEnable = false;
+            SelectConfigurationEnabled = false;
 
             if (currentWorkerIdx == -1)
             {
@@ -324,11 +360,20 @@ namespace UsbFlashDiskConfigurator.ViewModels
             }
             else
             {
+                foreach (BackgroundWorker bw in SelectedConfiguration.Workers)
+                {
+                    bw.ProgressChanged -= Bw_ProgressChanged;
+                    bw.RunWorkerCompleted -= Bw_RunWorkerCompleted;
+                }
+                
                 currentWorkerIdx = -1;
                 SelectedConfigurationStepModel = null;
 
                 StatusInformation = "Configuration of a USB key has finished.";
                 CommandManager.InvalidateRequerySuggested();
+
+                ChooseDiskEnable = true;
+                SelectConfigurationEnabled = true;
             }
 
         }
@@ -343,6 +388,11 @@ namespace UsbFlashDiskConfigurator.ViewModels
             }
         }
 
+        private bool CanRefreshDiskDrives(object obj)
+        {
+            if (currentWorkerIdx != -1 && SelectedConfiguration.Workers[currentWorkerIdx].IsBusy) return false;
+            else return true;
+        }
         public void RefreshDiskDrives(object obj)
         {
             int selDrive = DiskDrives.IndexOf(SelectedDiskDrive);

@@ -21,6 +21,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
         #region RELAY COMMANDS
 
         public RelayCommand RefreshDisksCommand { get; set; }
+        public RelayCommand EjectDiskCommand { get; set; }
         public RelayCommand CreateDiskCommand { get; set; }
         public RelayCommand<Window> CancelCommand { get; set; }
 
@@ -240,6 +241,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
         public MainWindowViewModel()
         {
             RefreshDisksCommand = new RelayCommand(RefreshDiskDrives, CanRefreshDiskDrives);
+            EjectDiskCommand = new RelayCommand(EjectDiskDrive, CanRefreshDiskDrives);
             CreateDiskCommand = new RelayCommand(CreateDisk, CanCreateDisk);
             CancelCommand = new RelayCommand<Window>(CancelApplication);
 
@@ -310,9 +312,10 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         private void RefreshSteps()
         {
+            ConfigurationSteps.Clear();
+
             if (SelectedConfiguration != null)
             {
-                ConfigurationSteps.Clear();
                 foreach (ConfigurationStepModel cfgs in SelectedConfiguration.Steps)
                 {
                     ConfigurationSteps.Add(cfgs);
@@ -330,6 +333,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         public void CreateDisk(object obj)
         {
+            if (MessageBox.Show("Are you sure?", "Data will be erased", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.No) return;
+            
             bool cnt = true;
 
             StatusInformation = "Configuration of a USB key is in progress...";
@@ -400,7 +405,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             foreach (var drive in DriveInfo.GetDrives())
             {
-                if (drive.DriveType == DriveType.Removable) DiskDrives.Add(new DriveInfoCustom(drive));
+                if (drive.IsReady && drive.DriveType == DriveType.Removable) DiskDrives.Add(new DriveInfoCustom(drive));
             }
 
             if (DiskDrives.Count != 0)
@@ -412,6 +417,17 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             LoadConfiguration();
 
+        }
+
+        public void EjectDiskDrive(object obj)
+        {
+            if (SelectedDiskDrive != null)
+            {
+                if (DriveEjector.EjectDrive(SelectedDiskDrive.DriveInfo.RootDirectory.Name[0]))
+                {
+                    RefreshDiskDrives(null);
+                }
+            }
         }
 
         public void UpdateSelectedDiskDriveInformation()

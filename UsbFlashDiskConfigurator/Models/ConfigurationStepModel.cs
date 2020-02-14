@@ -54,9 +54,13 @@ namespace UsbFlashDiskConfigurator.Models
             get
             {
                 string prms = "";
-                foreach (string s in parameters) prms += s + " | ";
-
-                prms = prms.Substring(0, prms.Length - 3);
+                
+                if (parameters != null)
+                {
+                    foreach (string s in parameters) prms += s + " | ";
+                    prms = prms.Substring(0, prms.Length - 3);
+                }
+                
                 return prms;
             }
         }
@@ -75,7 +79,10 @@ namespace UsbFlashDiskConfigurator.Models
 
             usbKeyLetter = ukl;
 
-            for (int i = 0; i < parameters.Length; i++) parameters[i] = parameters[i].Replace("[USBKEY]\\", usbKeyLetter);
+            if (parameters != null)
+            {
+                for (int i = 0; i < parameters.Length; i++) parameters[i] = parameters[i].Replace("[USBKEY]\\", usbKeyLetter);
+            }
         }
 
         public void SetStatus(string sts)

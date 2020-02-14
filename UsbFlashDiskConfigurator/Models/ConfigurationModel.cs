@@ -101,6 +101,10 @@ namespace UsbFlashDiskConfigurator.Models
                         ProcessFileMover(csm);
                         break;
 
+                    case "eject":
+                        ProcessDriveEjecter(csm);
+                        break;
+
                     default:
                         break;
                         
@@ -178,6 +182,12 @@ namespace UsbFlashDiskConfigurator.Models
                 FileMover fm = new FileMover(fileFromMove, fileToMove);
                 workers.Add(fm);
             }
+        }
+
+        private void ProcessDriveEjecter(ConfigurationStepModel csm)
+        {
+            DriveEjector de = new DriveEjector(driveInfo);
+            workers.Add(de);
         }
 
 

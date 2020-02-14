@@ -69,6 +69,21 @@ namespace UsbFlashDiskConfigurator.ViewModels
             }
         }
 
+        private string titleInformation;
+        public string TitleInformation
+        {
+            get { return titleInformation; }
+
+            set
+            {
+                if (titleInformation != value)
+                {
+                    titleInformation = value;
+                    RaisePropertyChanged("TitleInformation");
+                }
+            }
+        }
+
         private string imageMainWindow;
         public string ImageMainWindow
         {
@@ -297,6 +312,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
             else
             {
                 TitleMainWindow = cl.Title;
+                TitleInformation = cl.Information;
                 ImageMainWindow = cl.ImagePath;
 
                 Configurations.Clear();
@@ -333,8 +349,6 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         public void CreateDisk(object obj)
         {
-            if (MessageBox.Show("Are you sure?", "Data will be erased", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.No) return;
-            
             bool cnt = true;
 
             StatusInformation = "Configuration of a USB key is in progress...";
@@ -344,6 +358,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             if (currentWorkerIdx == -1)
             {
+                if (MessageBox.Show("Are you sure?", "Data will be erased", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.No) return;
+
                 SelectedConfiguration.ResetStepStatuses();
                 currentWorkerIdx = 0;
             }
@@ -423,11 +439,18 @@ namespace UsbFlashDiskConfigurator.ViewModels
         {
             if (SelectedDiskDrive != null)
             {
-                if (DriveEjector.EjectDrive(SelectedDiskDrive.DriveInfo.RootDirectory.Name[0]))
-                {
-                    RefreshDiskDrives(null);
-                }
+                DriveEjector de = new DriveEjector(SelectedDiskDrive.DriveInfo);
+                de.RunWorkerCompleted += De_RunWorkerCompleted;
+
+
+                de.RunWorkerAsync();
+                
             }
+        }
+
+        private void De_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            RefreshDiskDrives(null);
         }
 
         public void UpdateSelectedDiskDriveInformation()

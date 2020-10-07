@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using UsbFlashDiskConfigurator.ViewModels;
+using UsbFlashDiskConfigurator.Views;
 
 namespace UsbFlashDiskConfigurator
 {
@@ -30,7 +31,7 @@ namespace UsbFlashDiskConfigurator
 
             mwvm = new MainWindowViewModel();
             DataContext = mwvm;
-
+            
         }
     }
 }

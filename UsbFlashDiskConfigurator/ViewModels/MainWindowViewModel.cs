@@ -24,7 +24,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
         public RelayCommand EjectDiskCommand { get; set; }
         public RelayCommand CreateDiskCommand { get; set; }
         public RelayCommand<Window> CancelCommand { get; set; }
-
+        
 
         #endregion
 
@@ -34,7 +34,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         #region PROPERTIES
 
-
+        
 
         #endregion
 
@@ -432,6 +432,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
             }
 
             LoadConfiguration();
+            
+
 
         }
 

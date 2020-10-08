@@ -35,6 +35,7 @@
         <DataGrid ItemsSource="{Binding ConfigurationSteps, Mode=OneWay}" Margin="25,219,25,70"
                   SelectedItem="{Binding SelectedConfigurationStepModel, Mode=OneWay}"
                   Style="{StaticResource AzureDataGrid}"
+                  IsEnabled="{Binding ConfigurationStepsAreEnabled}"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   Background="#FFECF5F9" IsReadOnly="True" AutoGenerateColumns="False" CanUserSortColumns="False" FontSize="14">

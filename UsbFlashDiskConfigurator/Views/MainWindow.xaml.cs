@@ -29,9 +29,11 @@ namespace UsbFlashDiskConfigurator
         {
             InitializeComponent();
 
-            mwvm = new MainWindowViewModel();
+            mwvm = new MainWindowViewModel(this);
             DataContext = mwvm;
             
         }
+
+        
     }
 }

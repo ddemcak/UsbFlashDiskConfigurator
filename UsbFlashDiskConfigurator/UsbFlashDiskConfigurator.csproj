@@ -97,10 +97,16 @@
     <Compile Include="Services\DriveFormatter.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\UserInputProcessor.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\UserInputWindow.xaml.cs">
       <DependentUpon>UserInputWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WarningWindow.xaml.cs">
+      <DependentUpon>WarningWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Xml\ConfigurationFile.cs">
       <DependentUpon>ConfigurationFile.xsd</DependentUpon>
@@ -121,6 +127,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\UserInputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WarningWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

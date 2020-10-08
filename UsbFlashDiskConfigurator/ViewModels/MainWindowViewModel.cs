@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using UsbFlashDiskConfigurator.Helpers;
 using UsbFlashDiskConfigurator.Models;
 using UsbFlashDiskConfigurator.Services;
+using UsbFlashDiskConfigurator.Views;
 using UsbFlashDiskConfigurator.Xml;
 
 namespace UsbFlashDiskConfigurator.ViewModels
@@ -24,7 +26,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
         public RelayCommand EjectDiskCommand { get; set; }
         public RelayCommand CreateDiskCommand { get; set; }
         public RelayCommand<Window> CancelCommand { get; set; }
-        
+
 
         #endregion
 
@@ -34,7 +36,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         #region PROPERTIES
 
-        
+        private MetroWindow mainWindow;
 
         #endregion
 
@@ -249,14 +251,31 @@ namespace UsbFlashDiskConfigurator.ViewModels
             }
         }
 
-
         
 
-        #region CONSTRUCTOR
-        public MainWindowViewModel()
+        private bool configurationStepsAreEnabled;
+        public bool ConfigurationStepsAreEnabled
         {
+            get { return configurationStepsAreEnabled; }
+
+            set
+            {
+                if (configurationStepsAreEnabled != value)
+                {
+                    configurationStepsAreEnabled = value;
+                    RaisePropertyChanged("ConfigurationStepsAreEnabled");
+                }
+            }
+        }
+
+
+        #region CONSTRUCTOR
+        public MainWindowViewModel(MetroWindow window)
+        {
+            mainWindow = window;
+            
             RefreshDisksCommand = new RelayCommand(RefreshDiskDrives, CanRefreshDiskDrives);
-            EjectDiskCommand = new RelayCommand(EjectDiskDrive, CanRefreshDiskDrives);
+            EjectDiskCommand = new RelayCommand(EjectDiskDrive, CanEjectDiskDrive);
             CreateDiskCommand = new RelayCommand(CreateDisk, CanCreateDisk);
             CancelCommand = new RelayCommand<Window>(CancelApplication);
 
@@ -273,6 +292,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             ChooseDiskEnable = true;
             SelectConfigurationEnabled = true;
+
+            ConfigurationStepsAreEnabled = true;
         }
 
         
@@ -328,14 +349,20 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         private void RefreshSteps()
         {
-            ConfigurationSteps.Clear();
-
             if (SelectedConfiguration != null)
             {
+                ConfigurationSteps.Clear();
+
                 foreach (ConfigurationStepModel cfgs in SelectedConfiguration.Steps)
                 {
                     ConfigurationSteps.Add(cfgs);
                 }
+
+                ConfigurationStepsAreEnabled = true;
+            }
+            else 
+            {
+                ConfigurationStepsAreEnabled = false;
             }
         }
 
@@ -358,10 +385,26 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             if (currentWorkerIdx == -1)
             {
-                if (MessageBox.Show("Are you sure?", "Data will be erased", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.No) return;
+                
 
-                SelectedConfiguration.ResetStepStatuses();
-                currentWorkerIdx = 0;
+                WarningWindow ww = new WarningWindow();
+                ww.Owner = mainWindow;
+                ww.ShowDialog();
+
+                if (!ww.UserConfirmed)
+                {
+                    StatusInformation = "Configuration of a USB key was cancelled!";
+
+                    ChooseDiskEnable = true;
+                    SelectConfigurationEnabled = true;
+
+                    return;
+                }
+                else
+                {
+                    SelectedConfiguration.ResetStepStatuses();
+                    currentWorkerIdx = 0;
+                }
             }
             else
             {
@@ -378,6 +421,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("IN WORK");
 
                 SelectedConfiguration.Workers[currentWorkerIdx].RunWorkerAsync();
+
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             }
             else
             {
@@ -390,11 +435,16 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 currentWorkerIdx = -1;
                 SelectedConfigurationStepModel = null;
 
-                StatusInformation = "Configuration of a USB key has finished.";
+                if (SelectedConfiguration.Steps.Last().Type == "eject") StatusInformation = "USB key was sucessfully created and can be removed now.";
+                else StatusInformation = "USB key was sucessfully created. Please eject it safely now.";
                 CommandManager.InvalidateRequerySuggested();
 
                 ChooseDiskEnable = true;
                 SelectConfigurationEnabled = true;
+
+                if (SelectedConfiguration.Steps.Last().Type == "eject") RefreshDiskDrives(null);
+
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
             }
 
         }
@@ -414,6 +464,13 @@ namespace UsbFlashDiskConfigurator.ViewModels
             if (currentWorkerIdx != -1 && SelectedConfiguration.Workers[currentWorkerIdx].IsBusy) return false;
             else return true;
         }
+
+        private bool CanEjectDiskDrive(object obj)
+        {
+            if (currentWorkerIdx != -1 && SelectedConfiguration.Workers[currentWorkerIdx].IsBusy || SelectedConfiguration == null) return false;
+            else return true;
+        }
+
         public void RefreshDiskDrives(object obj)
         {
             int selDrive = DiskDrives.IndexOf(SelectedDiskDrive);
@@ -444,6 +501,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 DriveEjector de = new DriveEjector(SelectedDiskDrive.DriveInfo);
                 de.RunWorkerCompleted += De_RunWorkerCompleted;
 
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
                 de.RunWorkerAsync();
                 
@@ -453,6 +511,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
         private void De_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             RefreshDiskDrives(null);
+
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
         }
 
         public void UpdateSelectedDiskDriveInformation()

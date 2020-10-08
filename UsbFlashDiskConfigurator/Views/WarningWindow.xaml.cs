@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,15 +16,27 @@ using System.Windows.Shapes;
 namespace UsbFlashDiskConfigurator.Views
 {
     /// <summary>
-    /// Interaction logic for UserInputWindow.xaml
+    /// Interaction logic for WarningWindow.xaml
     /// </summary>
-    public partial class UserInputWindow : MetroWindow
+    public partial class WarningWindow : MetroWindow
     {
-        public string userInput;
-        
-        public UserInputWindow()
+        public bool UserConfirmed = false;
+
+
+        public WarningWindow()
         {
             InitializeComponent();
+        }
+
+        private void btnYes_Click(object sender, RoutedEventArgs e)
+        {
+            UserConfirmed = true;
+            this.Close();
+        }
+
+        private void btnNo_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

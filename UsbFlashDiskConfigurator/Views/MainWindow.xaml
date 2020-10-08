@@ -71,6 +71,5 @@
         </DataGrid>
         <TextBlock TextWrapping="Wrap" Text="{Binding StatusInformation}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="16" Margin="25,0,261,12" Height="26"/>
        
-
     </Grid>
 </Controls:MetroWindow>

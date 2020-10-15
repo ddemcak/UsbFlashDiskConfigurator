@@ -387,7 +387,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
             {
                 
 
-                WarningWindow ww = new WarningWindow();
+                WarningWindow ww = new WarningWindow(SelectedDiskDrive.ToString());
                 ww.Owner = mainWindow;
                 ww.ShowDialog();
 

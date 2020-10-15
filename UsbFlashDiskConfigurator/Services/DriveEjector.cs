@@ -35,7 +35,7 @@ namespace UsbFlashDiskConfigurator.Services
             try
             {
 
-                for (int tries = 0; tries < 3; tries++)
+                for (int tries = 0; tries < 5; tries++)
                 {
                     res = DriveManager.EjectDrive(letter);
                     //TODO: Try this - https://stackoverflow.com/questions/58735900/how-to-eject-usb-drive-on-windows-10-ioctl-storage-eject-media-no-longer-enough

@@ -23,9 +23,11 @@ namespace UsbFlashDiskConfigurator.Views
         public bool UserConfirmed = false;
 
 
-        public WarningWindow()
+        public WarningWindow(string diskInformation)
         {
             InitializeComponent();
+
+            LabelUserAreYouSure.Text = string.Format("All data on\n{0}\nwill be deleted!", diskInformation);
         }
 
         private void btnYes_Click(object sender, RoutedEventArgs e)

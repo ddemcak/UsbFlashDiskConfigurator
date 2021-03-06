@@ -345,6 +345,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
                 RefreshSteps();
             }
+
+            StatusInformation = "Configuration file was successfully loaded.";
         }
 
         private void RefreshSteps()
@@ -435,8 +437,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 currentWorkerIdx = -1;
                 SelectedConfigurationStepModel = null;
 
-                if (SelectedConfiguration.Steps.Last().Type == "eject") StatusInformation = "USB key was sucessfully created and can be removed now.";
-                else StatusInformation = "USB key was sucessfully created. Please eject it safely now.";
+                if (SelectedConfiguration.Steps.Last().Type == "eject") StatusInformation = "USB disk was sucessfully created and can be removed now.";
+                else StatusInformation = "USB disk was sucessfully created. Please remove it safely.";
                 CommandManager.InvalidateRequerySuggested();
 
                 ChooseDiskEnable = true;
@@ -473,6 +475,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         public void RefreshDiskDrives(object obj)
         {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+
             int selDrive = DiskDrives.IndexOf(SelectedDiskDrive);
             DiskDrives.Clear();
 
@@ -489,7 +493,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
             }
 
             LoadConfiguration();
-            
+
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
 
 
         }
@@ -513,6 +518,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
             RefreshDiskDrives(null);
 
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
+
+            StatusInformation = "USB disk can be removed now.";
         }
 
         public void UpdateSelectedDiskDriveInformation()

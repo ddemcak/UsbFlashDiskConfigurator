@@ -40,7 +40,7 @@ namespace UsbFlashDiskConfigurator.Services
                     res = DriveManager.EjectDrive(letter);
                     //TODO: Try this - https://stackoverflow.com/questions/58735900/how-to-eject-usb-drive-on-windows-10-ioctl-storage-eject-media-no-longer-enough
                     
-                    Thread.Sleep(3000);
+                    Thread.Sleep(5000);
 
                     if (res) break;
                 }

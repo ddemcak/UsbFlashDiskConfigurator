@@ -303,10 +303,13 @@ namespace UsbFlashDiskConfigurator.ViewModels
             if (currentWorkerIdx != -1)
             {
                 if (!(bool)e.Result) SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("ERROR");
-                else SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("DONE");
+                else 
+                {
+                    SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("DONE");
+                    CreateDisk(null);
+                }
             }
-
-            CreateDisk(null);
+            else CreateDisk(null);
             
         }
 
@@ -380,7 +383,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
         {
             bool cnt = true;
 
-            StatusInformation = "Configuration of a USB key is in progress...";
+            StatusInformation = "Configuration of a USB disk is in progress...";
 
             ChooseDiskEnable = false;
             SelectConfigurationEnabled = false;
@@ -395,7 +398,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
                 if (!ww.UserConfirmed)
                 {
-                    StatusInformation = "Configuration of a USB key was cancelled!";
+                    StatusInformation = "Configuration of a USB disk was cancelled!";
 
                     ChooseDiskEnable = true;
                     SelectConfigurationEnabled = true;

@@ -303,7 +303,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
             if (currentWorkerIdx != -1)
             {
                 if (!(bool)e.Result) SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("ERROR");
-                else 
+                else
                 {
                     SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("DONE");
                     CreateDisk(null);

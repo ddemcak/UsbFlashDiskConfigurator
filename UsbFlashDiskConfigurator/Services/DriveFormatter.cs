@@ -68,7 +68,10 @@ namespace UsbFlashDiskConfigurator.Services
 
                     if (process.ExitCode == 0) res = true;
 
-                    //Thread.Sleep(2000);
+                    Thread.Sleep(2000);
+                    
+                    // Testing simulated ERROR
+                    //res = false;
                 }
             }
             catch

@@ -61,6 +61,9 @@ namespace UsbFlashDiskConfigurator.Services
                 File.WriteAllText(fileToEdit, content);
 
                 e.Result = true;
+
+                // Testing simulated ERROR
+                //e.Result = false;
             }
             catch
             {

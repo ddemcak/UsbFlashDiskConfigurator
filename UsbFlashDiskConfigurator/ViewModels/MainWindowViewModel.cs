@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
         #region RELAY COMMANDS
 
         public RelayCommand RefreshDisksCommand { get; set; }
+        public RelayCommand OpenFolderCommand { get; set; }
         public RelayCommand EjectDiskCommand { get; set; }
         public RelayCommand CreateDiskCommand { get; set; }
         public RelayCommand<Window> CancelCommand { get; set; }
@@ -275,6 +277,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
             mainWindow = window;
             
             RefreshDisksCommand = new RelayCommand(RefreshDiskDrives, CanRefreshDiskDrives);
+            OpenFolderCommand = new RelayCommand(OpenFolderDiskDrive, CanOpenFolderDiskDrive);
             EjectDiskCommand = new RelayCommand(EjectDiskDrive, CanEjectDiskDrive);
             CreateDiskCommand = new RelayCommand(CreateDisk, CanCreateDisk);
             CancelCommand = new RelayCommand<Window>(CancelApplication);
@@ -302,14 +305,20 @@ namespace UsbFlashDiskConfigurator.ViewModels
         {
             if (currentWorkerIdx != -1)
             {
-                if (!(bool)e.Result) SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("ERROR");
+                if (!(bool)e.Result)
+                {
+                    SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("ERROR");
+                    currentWorkerIdx = -2;
+                }
                 else
                 {
                     SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("DONE");
-                    CreateDisk(null);
                 }
             }
-            else CreateDisk(null);
+            
+            CreateDisk(null);
+
+            
             
         }
 
@@ -349,7 +358,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 RefreshSteps();
             }
 
-            StatusInformation = "Configuration file was successfully loaded.";
+            if (DiskDrives.Count != 0) StatusInformation = "Configuration file was successfully loaded. Select any and click on Create disk.";
+            else StatusInformation = "Please insert empty USB disk and click on Refresh button.";
         }
 
         private void RefreshSteps()
@@ -390,26 +400,54 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
             if (currentWorkerIdx == -1)
             {
+
+                var matches = SelectedConfiguration.Steps.Where(p => p.Type == "format");
+
+                if (matches.ToList().Count > 0)
+                {
+                    WarningWindow ww = new WarningWindow(SelectedDiskDrive.ToString());
+                    ww.Owner = mainWindow;
+                    ww.ShowDialog();
+
+                    if (!ww.UserConfirmed)
+                    {
+                        StatusInformation = "Configuration of a USB disk was cancelled!";
+
+                        ChooseDiskEnable = true;
+                        SelectConfigurationEnabled = true;
+
+                        return;
+                    }
+                }
+                                
+                SelectedConfiguration.ResetStepStatuses();
+                currentWorkerIdx = 0;
                 
+                
+            }
+            else if (currentWorkerIdx == -2)
+            {
 
-                WarningWindow ww = new WarningWindow(SelectedDiskDrive.ToString());
-                ww.Owner = mainWindow;
-                ww.ShowDialog();
-
-                if (!ww.UserConfirmed)
+                foreach (BackgroundWorker bw in SelectedConfiguration.Workers)
                 {
-                    StatusInformation = "Configuration of a USB disk was cancelled!";
-
-                    ChooseDiskEnable = true;
-                    SelectConfigurationEnabled = true;
-
-                    return;
+                    bw.ProgressChanged -= Bw_ProgressChanged;
+                    bw.RunWorkerCompleted -= Bw_RunWorkerCompleted;
                 }
-                else
-                {
-                    SelectedConfiguration.ResetStepStatuses();
-                    currentWorkerIdx = 0;
-                }
+
+                currentWorkerIdx = -1;
+                SelectedConfigurationStepModel = null;
+
+                StatusInformation = "Configuration of a USB disk finished with ERROR!";
+                CommandManager.InvalidateRequerySuggested();
+
+                ChooseDiskEnable = true;
+                SelectConfigurationEnabled = true;
+
+                //if (SelectedConfiguration.Steps.Last().Type == "eject") RefreshDiskDrives(null);
+
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
+
+                return;
             }
             else
             {
@@ -441,7 +479,7 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 SelectedConfigurationStepModel = null;
 
                 if (SelectedConfiguration.Steps.Last().Type == "eject") StatusInformation = "USB disk was sucessfully created and can be removed now.";
-                else StatusInformation = "USB disk was sucessfully created. Please remove it safely.";
+                else StatusInformation = "USB disk was sucessfully created. Remove it safely by clicking on Eject button.";
                 CommandManager.InvalidateRequerySuggested();
 
                 ChooseDiskEnable = true;
@@ -467,6 +505,12 @@ namespace UsbFlashDiskConfigurator.ViewModels
         private bool CanRefreshDiskDrives(object obj)
         {
             if (currentWorkerIdx != -1 && SelectedConfiguration.Workers[currentWorkerIdx].IsBusy) return false;
+            else return true;
+        }
+
+        private bool CanOpenFolderDiskDrive(object obj)
+        {
+            if (currentWorkerIdx != -1 && SelectedConfiguration.Workers[currentWorkerIdx].IsBusy || SelectedConfiguration == null) return false;
             else return true;
         }
 
@@ -500,6 +544,14 @@ namespace UsbFlashDiskConfigurator.ViewModels
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
 
 
+        }
+
+        public void OpenFolderDiskDrive(object obj)
+        {
+            if (SelectedDiskDrive != null)
+            {
+                Process.Start(SelectedDiskDrive.DriveInfo.RootDirectory.FullName);
+            }
         }
 
         public void EjectDiskDrive(object obj)

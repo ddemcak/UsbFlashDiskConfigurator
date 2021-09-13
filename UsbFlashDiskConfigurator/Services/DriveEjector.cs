@@ -50,6 +50,7 @@ namespace UsbFlashDiskConfigurator.Services
                     sw.WriteLine(string.Format("$driveEject.Namespace(17).ParseName(\"{0}:\").InvokeVerb(\"Eject\")", letter));
                 }
 
+                Thread.Sleep(1000);
 
                 // We will call crated script.
                 Process process = new Process();
@@ -67,7 +68,6 @@ namespace UsbFlashDiskConfigurator.Services
                 process.WaitForExit();
                     
                 if (process.ExitCode == 0) res = true;
-
 
                 Thread.Sleep(1000);
 

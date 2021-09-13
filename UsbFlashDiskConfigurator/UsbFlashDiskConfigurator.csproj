@@ -77,7 +77,9 @@
     <Compile Include="Converters\PathToImageConverter.cs" />
     <Compile Include="Models\ConfigurationModel.cs" />
     <Compile Include="Models\ConfigurationStepModel.cs" />
-    <Compile Include="Services\DriveEjector.cs" />
+    <Compile Include="Services\DriveEjector.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Services\DriveManager.cs" />
     <Compile Include="Services\FileDownloader.cs">
       <SubType>Component</SubType>

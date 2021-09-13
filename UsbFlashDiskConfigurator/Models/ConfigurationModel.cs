@@ -118,9 +118,10 @@ namespace UsbFlashDiskConfigurator.Models
 
         private void ProcessDriveFormatter(ConfigurationStepModel csm)
         {
-            string fs = csm.ParametersArray[0].ToUpper();
+            string filesystem = csm.ParametersArray[0].ToUpper();
+            string volumeLabel = RemoveSpecialCharactersAndLimit(Name);
 
-            DriveFormatter df = new DriveFormatter(driveInfo, fs);
+            DriveFormatter df = new DriveFormatter(driveInfo, filesystem, volumeLabel);
             workers.Add(df);
         }
 
@@ -194,6 +195,29 @@ namespace UsbFlashDiskConfigurator.Models
         public void ResetStepStatuses()
         {
             foreach (ConfigurationStepModel csm in Steps) csm.SetStatus("");
+        }
+
+        /// <summary>
+        /// Remove all characters except 0-9, a-z, A-Z, _ and -
+        /// Also cuts off more than 11 characters.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public string RemoveSpecialCharactersAndLimit(string str)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in str)
+            {
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == '-')
+                {
+                    sb.Append(c);
+                }
+            }
+            string noSpecChars = sb.ToString();
+            
+            // 11 characters are MAX allowed.
+            if (noSpecChars.Length > 11) noSpecChars = noSpecChars.Substring(0, 11);
+            return noSpecChars;        
         }
 
         public override string ToString()

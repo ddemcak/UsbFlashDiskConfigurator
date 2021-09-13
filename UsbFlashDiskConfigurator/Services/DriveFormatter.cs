@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,13 +21,15 @@ namespace UsbFlashDiskConfigurator.Services
 
         private DriveInfo driveInfo;
         private string filesystem;
+        private string volumeLabel;
 
 
-        public DriveFormatter(DriveInfo di, string fs)
+        public DriveFormatter(DriveInfo di, string fs, string vl)
         {
             WorkerReportsProgress = false;
             driveInfo = di;
             filesystem = fs;
+            volumeLabel = vl;
         }
 
         protected override void OnDoWork(DoWorkEventArgs e)
@@ -43,9 +46,29 @@ namespace UsbFlashDiskConfigurator.Services
                 }
                 else
                 {
-                    res = DriveManager.FormatDrive(letter, driveInfo.VolumeLabel, filesystem);
+                    // Obsolete
+                    //res = DriveManager.FormatDrive(letter, driveInfo.VolumeLabel, filesystem);
 
-                    Thread.Sleep(2000);
+
+
+                    // We will call system standard FORMAT command.
+                    Process process = new Process();
+                    
+                    ProcessStartInfo psi = new ProcessStartInfo();
+                    psi.UseShellExecute = false;
+                    psi.CreateNoWindow = true;
+                    psi.WindowStyle = ProcessWindowStyle.Hidden;
+                    psi.FileName = "cmd.exe";
+                    psi.Arguments = string.Format("/C format {0}: /fs:{1} /q /v:{2} /y", letter, filesystem, volumeLabel);
+                    psi.Verb = "runas";
+
+                    process.StartInfo = psi;
+                    process.Start();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0) res = true;
+
+                    //Thread.Sleep(2000);
                 }
             }
             catch

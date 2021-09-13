@@ -9,6 +9,10 @@ using System.Text;
 
 namespace UsbFlashDiskConfigurator.Services
 {
+    
+    /// <summary>
+    /// This class is not reliable and is obsolete.
+    /// </summary>
     class DriveManager
     {
 

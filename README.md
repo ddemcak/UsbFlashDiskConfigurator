@@ -22,6 +22,7 @@ Handy tool for automatiing the process of USB Flash Disk creation.
 * **execute** - Runs *.bat* file. Requires 1 parameter - *filename* of the executable.
 * **move** - Moves file or directory. Requires 2 parameters - *MoveFromLocation* and *MoveTolocation*.
 * **eject** - Ejects USB Flash Drive. No paramters required.
+* **userinput** - User can input string during runtime and user it in different step. This step must be defined before the step that uses the data. Currently only *replatetext* step supports it.
 
 ## Example of config.xml
 
@@ -46,10 +47,13 @@ Handy tool for automatiing the process of USB Flash Disk creation.
 			<Step Type="execute" Description="Make USB drive bootable">
 				<Parameter>[USBKEY]\makeboot.bat</Parameter>
 			</Step>
+			<Step Type="userinput" Description="Enter Timeout">
+				<Parameter>[USER_INPUT]</Parameter>
+			</Step>
 			<Step Type="replacetext" Description="Change boot timeout">
 				<Parameter>[USBKEY]\log.txt</Parameter>
 				<Parameter>OPTION 0</Parameter>
-				<Parameter>OPTION 1</Parameter>
+				<Parameter>TIMEOUT [USER_INPUT]</Parameter>
 			</Step>
 			<Step Type="eject" Description="Eject USB drive"/>
 		</Configuration>

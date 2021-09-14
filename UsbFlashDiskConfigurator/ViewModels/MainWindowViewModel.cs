@@ -271,6 +271,9 @@ namespace UsbFlashDiskConfigurator.ViewModels
         }
 
 
+        private Dictionary<string, string> userVariables;
+
+
         #region CONSTRUCTOR
         public MainWindowViewModel(MetroWindow window)
         {
@@ -297,6 +300,8 @@ namespace UsbFlashDiskConfigurator.ViewModels
             SelectConfigurationEnabled = true;
 
             ConfigurationStepsAreEnabled = true;
+
+            userVariables = new Dictionary<string, string>();
         }
 
         
@@ -312,6 +317,24 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 }
                 else
                 {
+                    // If USER INPUT step finished, save variable to dictionary.
+                    if (SelectedConfiguration.Steps[currentWorkerIdx].Type == "userinput")
+                    {
+                        Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
+
+                        string varName = SelectedConfiguration.Steps[currentWorkerIdx].ParametersArray[0];
+
+                        UserInputWindow uiw = new UserInputWindow(SelectedConfiguration.Steps[currentWorkerIdx].Description);
+                        uiw.ShowDialog();
+
+
+                        string varValue = uiw.UserInput;
+                        userVariables.Add(varName, varValue);
+
+                        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    }
+                    
+
                     SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("DONE");
                 }
             }
@@ -460,10 +483,18 @@ namespace UsbFlashDiskConfigurator.ViewModels
                 SelectedConfiguration.Workers[currentWorkerIdx].ProgressChanged += Bw_ProgressChanged;
                 SelectedConfiguration.Workers[currentWorkerIdx].RunWorkerCompleted += Bw_RunWorkerCompleted;
 
+                
+
                 SelectedConfigurationStepModel = SelectedConfiguration.Steps[currentWorkerIdx];
                 SelectedConfiguration.Steps[currentWorkerIdx].SetStatus("IN WORK");
 
-                SelectedConfiguration.Workers[currentWorkerIdx].RunWorkerAsync();
+                // Send User Variables dictionary to USER INPUT worker
+                if (SelectedConfiguration.Steps[currentWorkerIdx].Type == "replacetext")
+                {
+                    SelectedConfiguration.Workers[currentWorkerIdx].RunWorkerAsync(userVariables);
+                }
+                else SelectedConfiguration.Workers[currentWorkerIdx].RunWorkerAsync();
+
 
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             }

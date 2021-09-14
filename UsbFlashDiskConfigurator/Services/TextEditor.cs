@@ -12,24 +12,14 @@ namespace UsbFlashDiskConfigurator.Services
     {
         #region PROPERTIES
         private string fileToEdit;
-        public string FileToEdit
-        {
-            get { return fileToEdit; }
-        }
-
+        
         private string textToFind;
-        public string TextToFind
-        {
-            get { return TextToFind; }
-        }
-
+        
         private string textToReplace;
-        public string TextToReplace
-        {
-            get { return TextToReplace; }
-        }
+        
+       
 
-
+        private Dictionary<string, string> userVariables;
 
         #endregion
 
@@ -43,6 +33,7 @@ namespace UsbFlashDiskConfigurator.Services
             textToFind = findPattern;
             textToReplace = replacePattern;
 
+            
 
         }
 
@@ -55,6 +46,15 @@ namespace UsbFlashDiskConfigurator.Services
 
             try
             {
+                userVariables = e.Argument as Dictionary<string,string>;
+
+                // Change parameters if they are defined in User Variables dictionary
+                foreach (KeyValuePair<string,string> kvp in userVariables)
+                {
+                    if (textToFind.Contains(kvp.Key)) textToFind = textToFind.Replace(kvp.Key, kvp.Value);
+                    if (textToReplace.Contains(kvp.Key)) textToReplace = textToReplace.Replace(kvp.Key, kvp.Value);
+                }
+
                 string content = File.ReadAllText(fileToEdit);
 
                 content = content.Replace(textToFind, textToReplace);

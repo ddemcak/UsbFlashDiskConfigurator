@@ -21,11 +21,30 @@ namespace UsbFlashDiskConfigurator.Views
     /// </summary>
     public partial class UserInputWindow : MetroWindow
     {
-        public string userInput;
+        public string UserInput;
         
-        public UserInputWindow()
+        public UserInputWindow(string UserMessage)
         {
             InitializeComponent();
+
+            LabelUserInputLabel.Content = UserMessage;
+
+            TextBoxUserInput.Focus();
+        }
+
+        private void btnOK_Click(object sender, RoutedEventArgs e)
+        {
+            UserInput = TextBoxUserInput.Text;
+            this.Close();
+        }
+
+        private void TextBoxUserInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                UserInput = TextBoxUserInput.Text;
+                this.Close();
+            }
         }
     }
 }

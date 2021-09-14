@@ -105,6 +105,10 @@ namespace UsbFlashDiskConfigurator.Models
                         ProcessDriveEjecter(csm);
                         break;
 
+                    case "userinput":
+                        ProcessUserInput(csm);
+                        break;
+
                     default:
                         break;
                         
@@ -189,6 +193,17 @@ namespace UsbFlashDiskConfigurator.Models
         {
             DriveEjector de = new DriveEjector(driveInfo);
             workers.Add(de);
+        }
+        
+        private void ProcessUserInput(ConfigurationStepModel csm)
+        {
+            if (csm.ParametersArray.Length == 1)
+            {
+                string userInputVariable = csm.ParametersArray[0];
+
+                UserInputProcessor uip = new UserInputProcessor(csm.Description);
+                workers.Add(uip);
+            }
         }
 
 

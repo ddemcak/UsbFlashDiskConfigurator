@@ -10,16 +10,20 @@
         
         mc:Ignorable="d"
         
-        Title="User Input" Height="175" Width="350" 
+        Title="User Input" Height="152" Width="350" 
         
         WindowStyle="SingleBorderWindow"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
     <Grid>
-        <Rectangle Fill="#6641B1E1" HorizontalAlignment="Stretch" Height="146" VerticalAlignment="Top" Margin="0,0,0,0" />
-        <TextBox Name="TextBoxUserInput" HorizontalAlignment="Left" Height="30" Margin="10,46,0,0" TextWrapping="Wrap" Text="" FontSize="16" VerticalAlignment="Top" Width="324"/>
-        <Label Name="LabelUserInputLabel" Content="Enter VEHICLE ID:" HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="16" VerticalAlignment="Top" Width="324"/>
-        <Button x:Name="btnOK" Content="OK" HorizontalAlignment="Left" Margin="258,104,0,0" VerticalAlignment="Top" Width="76" Height="32" FontSize="14" Controls:ControlsHelper.ContentCharacterCasing="Normal" Controls:ButtonHelper.PreserveTextCase="True" FontWeight="Bold" Controls:ButtonHelper.CornerRadius="0" BorderThickness="0"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="101*"/>
+            <ColumnDefinition Width="243*"/>
+        </Grid.ColumnDefinitions>
+        <Rectangle Fill="#6641B1E1" HorizontalAlignment="Stretch" Height="146" VerticalAlignment="Top" Margin="0,0,0,0" Grid.ColumnSpan="2" />
+        <Label Name="LabelUserInputLabel" Content="..." HorizontalAlignment="Left" Margin="10,10,0,0" FontSize="16" VerticalAlignment="Top" Width="324" Grid.ColumnSpan="2"/>
+        <TextBox Name="TextBoxUserInput" HorizontalAlignment="Left" Height="30" Margin="10,46,0,0" TextWrapping="Wrap" Text="" FontSize="16" VerticalAlignment="Top" Width="324" Grid.ColumnSpan="2" KeyDown="TextBoxUserInput_KeyDown"/>
+        <Button x:Name="btnOK" Content="OK" HorizontalAlignment="Left" Margin="157,81,0,0" VerticalAlignment="Top" Width="76" Height="32" FontSize="14" Controls:ControlsHelper.ContentCharacterCasing="Normal" Controls:ButtonHelper.PreserveTextCase="True" FontWeight="Bold" Controls:ButtonHelper.CornerRadius="0" BorderThickness="0" Grid.Column="1" Click="btnOK_Click"/>
 
     </Grid>
 </Controls:MetroWindow>

@@ -19,6 +19,8 @@ namespace UsbFlashDiskConfigurator.Services
 
         private string query;
 
+        public string UserInputVariableValue;
+
 
         public UserInputProcessor(string qry)
         {
@@ -28,12 +30,12 @@ namespace UsbFlashDiskConfigurator.Services
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-            UserInputWindow uiw = new UserInputWindow();
-            uiw.ShowDialog();
+            //UserInputWindow uiw = new UserInputWindow(query);
+            //uiw.ShowDialog();
+            //
+            //UserInputVariableValue = uiw.UserInput;
 
-            //uiw.
-
-            e.Result = "";
+            e.Result = true;
         }
 
     }

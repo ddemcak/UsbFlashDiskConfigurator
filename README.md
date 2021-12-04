@@ -30,6 +30,7 @@ Handy tool for automatiing the process of USB Flash Disk creation.
 <?xml version="1.0" encoding="utf-8"?>
 <AppConfiguration xmlns="http://tempuri.org/ConfigurationFile.xsd">
 	<Title>USB bootable drive</Title>
+	<Version>100</Version>
 	<CompanyLogoPath>ms-logo.png</CompanyLogoPath>
 	<Configurations>
 		<Configuration Name="Small OS" Description="Minimalistic OS">

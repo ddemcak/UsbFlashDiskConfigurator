@@ -14,11 +14,13 @@ namespace UsbFlashDiskConfigurator.Xml
 
         #region CONSTANTS
 
-        private string _configFilePath = "config.xml";
+        //private string _configFilePath = "config.xml";
 
         #endregion
 
         #region PROPERTIES
+
+        private string configFilename = null;
 
         private AppConfiguration config = null;
         public AppConfiguration Config
@@ -29,6 +31,11 @@ namespace UsbFlashDiskConfigurator.Xml
         public string Title
         {
             get { return config.Title; }
+        }
+
+        public string Version
+        {
+            get { return config.Version; }
         }
 
         public string Information
@@ -44,9 +51,9 @@ namespace UsbFlashDiskConfigurator.Xml
         #endregion
         
         #region CONSTRUCTOR
-        public ConfigurationLoader()
+        public ConfigurationLoader(string fn)
         {
-
+            configFilename = fn;
         }
         #endregion
 
@@ -57,7 +64,7 @@ namespace UsbFlashDiskConfigurator.Xml
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(AppConfiguration));
 
-                StreamReader reader = new StreamReader(_configFilePath);
+                StreamReader reader = new StreamReader(configFilename);
                 config = (AppConfiguration)serializer.Deserialize(reader);
                 reader.Close();
             }

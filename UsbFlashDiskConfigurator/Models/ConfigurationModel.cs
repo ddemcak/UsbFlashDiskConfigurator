@@ -125,7 +125,7 @@ namespace UsbFlashDiskConfigurator.Models
             string filesystem = csm.ParametersArray[0].ToUpper();
             string volumeLabel = RemoveSpecialCharactersAndLimit(Name);
 
-            DriveFormatter df = new DriveFormatter(driveInfo, filesystem, volumeLabel);
+            DriveFormatter df = new DriveFormatter(driveInfo, filesystem, false, volumeLabel);
             workers.Add(df);
         }
 

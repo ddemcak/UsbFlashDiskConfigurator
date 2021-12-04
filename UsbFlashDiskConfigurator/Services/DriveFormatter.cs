@@ -21,10 +21,11 @@ namespace UsbFlashDiskConfigurator.Services
 
         private DriveInfo driveInfo;
         private string filesystem;
+        private bool useVolumeLabel;
         private string volumeLabel;
 
 
-        public DriveFormatter(DriveInfo di, string fs, string vl)
+        public DriveFormatter(DriveInfo di, string fs, bool uvl, string vl)
         {
             WorkerReportsProgress = false;
             driveInfo = di;
@@ -59,7 +60,8 @@ namespace UsbFlashDiskConfigurator.Services
                     psi.CreateNoWindow = true;
                     psi.WindowStyle = ProcessWindowStyle.Hidden;
                     psi.FileName = "cmd.exe";
-                    psi.Arguments = string.Format("/C format {0}: /fs:{1} /q /v:{2} /y", letter, filesystem, volumeLabel);
+                    if (useVolumeLabel) psi.Arguments = string.Format("/C format {0}: /fs:{1} /q /v:{2} /y", letter, filesystem, volumeLabel);
+                    else psi.Arguments = string.Format("/C format {0}: /fs:{1} /q /y", letter, filesystem);
                     psi.Verb = "runas";
 
                     process.StartInfo = psi;

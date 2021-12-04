@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using UsbFlashDiskConfigurator.Configurators;
 using UsbFlashDiskConfigurator.Helpers;
 using UsbFlashDiskConfigurator.Models;
 using UsbFlashDiskConfigurator.Services;
@@ -20,6 +21,13 @@ namespace UsbFlashDiskConfigurator.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
+
+        #region CONSTANTS
+
+        private const string _iniFile = "UsbFlashDiskConfiguratorConfig.ini";
+
+
+        #endregion
 
         #region RELAY COMMANDS
 
@@ -363,12 +371,16 @@ namespace UsbFlashDiskConfigurator.ViewModels
 
         private void LoadConfiguration()
         {
-            ConfigurationLoader cl = new ConfigurationLoader();
+            // Load INI Configuration
+            ConfigurationFileManager cfm = new ConfigurationFileManager(_iniFile);
+            
+            
+            ConfigurationLoader cl = new ConfigurationLoader(cfm.ProjectConfigurationFile);
             if (!cl.LoadConfiguration()) StatusInformation = "Loading Configuration failed!";
             else
             {
                 TitleMainWindow = cl.Title;
-                TitleInformation = cl.Information;
+                TitleInformation = string.Format("Version: {0}.{1}                {2}", cl.Version.Substring(0, 1), cl.Version.Substring(1, 2), cl.Information);
                 ImageMainWindow = cl.ImagePath;
 
                 Configurations.Clear();

@@ -9,6 +9,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="Title" type="xs:string" />
+        <xs:element name="Version" type="xs:string" />
         <xs:element name="Information" type="xs:string" />
         <xs:element name="CompanyLogoPath" type="xs:string" />
         <xs:element name="Configurations">

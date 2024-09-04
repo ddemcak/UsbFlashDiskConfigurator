@@ -376,11 +376,16 @@ namespace UsbFlashDiskConfigurator.ViewModels
             
             
             ConfigurationLoader cl = new ConfigurationLoader(cfm.ProjectConfigurationFile);
-            if (!cl.LoadConfiguration()) StatusInformation = "Loading Configuration failed!";
+
+            if (!cl.LoadConfiguration())
+            {
+                StatusInformation = String.Format("Loading configuration file \"{0}\" failed!", cfm.ProjectConfigurationFile);
+                return;
+            }
             else
             {
                 TitleMainWindow = cl.Title;
-                TitleInformation = string.Format("Version: {0}.{1}                {2}", cl.Version.Substring(0, 1), cl.Version.Substring(1, 2), cl.Information);
+                if (cl.Version != null && cl.Information != null) TitleInformation = string.Format("Version: {0}.{1}                {2}", cl.Version.Substring(0, 1), cl.Version.Substring(1, 2), cl.Information);
                 ImageMainWindow = cl.ImagePath;
 
                 Configurations.Clear();
